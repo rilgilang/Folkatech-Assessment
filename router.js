@@ -1,18 +1,22 @@
 const express = require("express");
-const UsersRepo = require("./repository/userRepo");
-const UsersService = require("./service/userService");
-const { getUserHandler, createUserHandler } = require("./handlers/userHandler");
-
+const passport = require("passport");
+const {
+  getUserHandler,
+  createUserHandler,
+  loginHandler,
+} = require("./handlers/userHandler");
+const { signin } = require("./middleware/auth");
+const UserRepo = require("./repository/userRepo");
+const UserService = require("./service/userService");
 const router = express.Router();
 
-const usersRepo = new UsersRepo();
-
-const usersService = new UsersService({ user: usersRepo });
+const userRepo = new UserRepo();
+const userService = new UserService(userRepo);
 
 router.get(
   "/user",
   (req, res, next) => {
-    req.service = usersService;
+    req.service = userService;
     next();
   },
   getUserHandler
@@ -21,10 +25,12 @@ router.get(
 router.post(
   "/user",
   (req, res, next) => {
-    req.service = usersService;
+    req.service = userService;
     next();
   },
   createUserHandler
 );
+
+router.post("/login", signin);
 
 module.exports = router;

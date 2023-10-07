@@ -5,7 +5,11 @@ class UserHandlers {
     try {
       const service = req.service;
       const result = await service.getUsers();
-      return res.status(200).json({ message: "success", data: result });
+      if (result.statusCode != 200) {
+        return res.status(result.statusCode).json({ message: result.message });
+      }
+
+      return res.status(200).json({ message: "success", data: result.data });
     } catch (error) {
       return res.status(500).json({ message: error });
     }
@@ -40,6 +44,10 @@ class UserHandlers {
         errorMessages.push(`email not valid`);
       }
 
+      if (errorMessages.length > 0) {
+        return res.status(400).json({ message: errorMessages });
+      }
+
       let user = {
         userName: req.body.username,
         password: req.body.password,
@@ -50,6 +58,51 @@ class UserHandlers {
 
       const service = req.service;
       const result = await service.addUser(user);
+
+      if (result.statusCode != 200) {
+        return res.status(result.statusCode).json({ message: result.message });
+      }
+
+      return res.status(200).json({ message: "success", data: result.data });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error });
+    }
+  }
+
+  async loginHandler(req, res) {
+    try {
+      const errorMessages = [];
+      const validate = ["username", "password"];
+
+      validate.map((x) => {
+        if (
+          !req.body[x] ||
+          req.body[x] === "" ||
+          validator.isEmpty(`${req.body[x]}`)
+        ) {
+          errorMessages.push(`${x} cannot be empty`);
+        }
+      });
+
+      if (errorMessages.length > 0) {
+        return res.status(400).json({ message: errorMessages });
+      }
+
+      let user = {
+        userName: req.body.username,
+        password: req.body.password,
+      };
+
+      const service = req.service;
+      const passport = req.passport;
+
+      const result = await service.login(user, passport);
+
+      if (result.statusCode != 200) {
+        return res.status(result.statusCode).json({ message: result.message });
+      }
+
       return res.status(200).json({ message: "success", data: result });
     } catch (error) {
       console.log(error);

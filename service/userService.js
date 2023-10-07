@@ -1,18 +1,29 @@
-function UsersService(repo) {
-  async function getUsers() {
-    const data = await repo.user.findAll();
-    return data;
+class UserService {
+  constructor(userRepo) {
+    this.userRepo = userRepo;
+  }
+  async getUsers() {
+    const data = await this.userRepo.findAll();
+    return { message: "success", data: data, statusCode: 200 };
   }
 
-  async function addUser(userData) {
-    const result = await repo.user.addUser(userData);
-    return result;
+  async addUser(userData) {
+    const result = await this.userRepo.addUser(userData);
+    return { message: "success", data: result, statusCode: 200 };
   }
 
-  return {
-    getUsers,
-    addUser,
-  };
+  async login(userData, passport) {
+    passport.authenticate("signin", { session: false }, (err, user, info) => {
+      if (err) {
+        return { message: err.message, statusCode: 401 };
+        // return next({ message: err.message, statusCode: 401 });
+      }
+      if (!user) {
+        return { message: info.message, statusCode: 401 };
+        // return next({ message: info.message, statusCode: 401 });
+      }
+      req.user = user;
+    });
+  }
 }
-
-module.exports = UsersService;
+module.exports = UserService;
