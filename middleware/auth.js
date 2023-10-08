@@ -3,15 +3,36 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const JWTstrategy = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
+const validator = require("validator");
+const UserRepo = require("../repository/userRepo");
+
+const userRepo = new UserRepo();
 
 // for sign in==========================================
 exports.signin = (req, res, next) => {
+  const errorMessages = [];
+  const validate = ["username", "password"];
+
+  validate.map((x) => {
+    if (
+      !req.body[x] ||
+      req.body[x] === "" ||
+      validator.isEmpty(`${req.body[x]}`)
+    ) {
+      errorMessages.push(`${x} cannot be empty`);
+    }
+  });
+
+  if (errorMessages.length > 0) {
+    return res.status(400).json({ message: errorMessages });
+  }
+
   passport.authenticate("signin", { session: false }, (err, user, info) => {
     if (err) {
-      return next({ message: err.message, statusCode: 401 });
+      return res.status(401).json({ message: err.message, statusCode: 401 });
     }
     if (!user) {
-      return next({ message: info.message, statusCode: 401 });
+      return res.status(401).json({ message: info.message, statusCode: 401 });
     }
     req.user = user;
     next();
@@ -28,13 +49,14 @@ passport.use(
     },
     async (req, username, password, done) => {
       try {
-        const data = await user.findOne({ username: username });
+        const data = await userRepo.findOne(username);
         if (!data) {
-          return done(null, false, { message: "User is not found!" });
+          console.log("no user");
+          return done(null, false, { message: "username or password wrong" });
         }
         const validate = await bcrypt.compare(password, data.password);
         if (!validate) {
-          return done(null, false, { message: "Wrong password!" });
+          return done(null, false, { message: "username or password wrong" });
         }
         return done(null, data, { message: "Login success!" });
       } catch (e) {
