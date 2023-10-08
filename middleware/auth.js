@@ -70,10 +70,10 @@ passport.use(
 exports.user = (req, res, next) => {
   passport.authorize("user", { session: false }, (err, user, info) => {
     if (err) {
-      return next({ message: err.message, statusCode: 403 });
+      return res.status(403).json({ message: err.message, statusCode: 403 });
     }
     if (!user) {
-      return next({ message: info.message, statusCode: 403 });
+      return res.status(403).json({ message: info.message, statusCode: 403 });
     }
     req.user = user;
     next();
@@ -88,20 +88,15 @@ passport.use(
     },
     async (token, done) => {
       try {
-        const data = await user.findOne({
-          attributes: ["id", "email", "username"],
-          where: {
-            id: token.user,
-          },
-        });
+        const data = await userRepo.findOneById(token.user);
 
         if (data) {
           return done(null, token);
         }
 
-        return done(null, false, { message: "Access denied!" });
+        return done(null, false, { message: "access denied" });
       } catch (error) {
-        return done(error, false, { message: "Access denied!" });
+        return done(error, false, { message: "access denied" });
       }
     }
   )

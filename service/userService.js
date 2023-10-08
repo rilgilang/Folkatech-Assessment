@@ -28,6 +28,11 @@ class UserService {
 
     return { message: "success", data: token, statusCode: 200 };
   };
+
+  updateUser = async (id, userData) => {
+    const data = await this.userRepo.updateUser(id, userData);
+    return { message: "success", data: data, statusCode: 200 };
+  };
 }
 
 module.exports = UserService;

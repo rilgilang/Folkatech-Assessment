@@ -94,6 +94,43 @@ class UserHandlers {
     }
   };
 
+  updateUserHandler = async (req, res) => {
+    try {
+      if (
+        !req.body.email &&
+        !req.body.account_number &&
+        !req.body.identity_number
+      ) {
+        return res.status(400).json({
+          message: `need one of these to update email, account_number, identity_number`,
+        });
+      }
+
+      if (req.body.email && !validator.isEmail(req.body.email)) {
+        return res.status(400).json({
+          message: `email not valid`,
+        });
+      }
+
+      let user = {
+        accountNumber: req.body.account_number,
+        emailAddress: req.body.email,
+        identityNumber: req.body.identity_number,
+      };
+
+      const result = await this.userService.updateUser(req.user.user, user);
+
+      if (result.statusCode != 200) {
+        return res.status(result.statusCode).json({ message: result.message });
+      }
+
+      return res.status(200).json({ message: "success", data: result.data });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error });
+    }
+  };
+
   loginHandler = async (req, res) => {
     try {
       const result = await this.userService.login(req.user, this.passport);
