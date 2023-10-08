@@ -2,13 +2,13 @@ const hashPassword = require("../helper/passwordSalt");
 const { user } = require("../models/models");
 
 class UserRepo {
-  findAll = async () => {
-    const result = await user.find({});
+  findAll = async (params) => {
+    const result = await user.find(params);
     return result;
   };
 
-  findOne = async () => {
-    const result = await user.find({});
+  findOne = async (username) => {
+    const result = await user.findOne({ userName: username });
     return result;
   };
 
