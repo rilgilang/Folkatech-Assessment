@@ -19,6 +19,8 @@ class UserRepo {
 
   addUser = async (userData) => {
     userData.password = hashPassword(userData.password);
+    userData.maxAllowedBorrow = 2;
+    userData.currentBorrow = 0;
     const newUser = await user.create(userData);
     const result = await user.findOne({
       _id: newUser._id,

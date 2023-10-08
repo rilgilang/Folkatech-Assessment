@@ -16,6 +16,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    maxAllowedBorrow: {
+      type: Number,
+      required: true,
+    },
+    currentBorrow: {
+      type: Number,
+      required: true,
+    },
     emailAddress: {
       type: String,
       required: true,
