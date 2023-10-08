@@ -37,12 +37,13 @@ class UserRepo {
   };
 
   deleteUser = async (id) => {
-    const updatedUser = await user.deleteOne({ _id: id }, userData);
-    const result = await user.findOne({
-      _id: newUser._id,
-    });
+    const deletedUser = await user.deleteOne({ _id: id });
 
-    return result;
+    if (deletedUser.acknowledged != true) {
+      return false;
+    }
+
+    return true;
   };
 }
 

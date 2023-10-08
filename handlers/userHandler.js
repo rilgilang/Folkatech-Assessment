@@ -3,7 +3,6 @@ const validator = require("validator");
 class UserHandlers {
   constructor(userService, passport) {
     this.userService = userService;
-    this.passport = passport;
   }
 
   getUserHandler = async (req, res) => {
@@ -134,6 +133,35 @@ class UserHandlers {
   loginHandler = async (req, res) => {
     try {
       const result = await this.userService.login(req.user, this.passport);
+
+      if (result.statusCode != 200) {
+        return res.status(result.statusCode).json({ message: result.message });
+      }
+
+      return res.status(200).json({ message: "success", data: result.data });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: error });
+    }
+  };
+
+  deleteHandler = async (req, res) => {
+    try {
+      const { confirmation } = req.body;
+
+      if (!confirmation) {
+        return res.status(400).json({
+          message: `confirmation cannot be empty`,
+        });
+      }
+
+      if (confirmation != "delete") {
+        return res.status(400).json({
+          message: `confirmation must be "delete"`,
+        });
+      }
+
+      const result = await this.userService.deleteUser(req.user.user);
 
       if (result.statusCode != 200) {
         return res.status(result.statusCode).json({ message: result.message });

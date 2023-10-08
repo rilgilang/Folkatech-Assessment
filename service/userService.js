@@ -33,6 +33,14 @@ class UserService {
     const data = await this.userRepo.updateUser(id, userData);
     return { message: "success", data: data, statusCode: 200 };
   };
+
+  deleteUser = async (id) => {
+    const data = await this.userRepo.deleteUser(id);
+    if (data == false) {
+      return { message: "error deleting user", statusCode: 500 };
+    }
+    return { message: "success", data: data, statusCode: 200 };
+  };
 }
 
 module.exports = UserService;
