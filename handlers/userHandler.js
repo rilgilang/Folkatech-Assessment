@@ -5,6 +5,14 @@ class UserHandlers {
     this.userService = userService;
   }
 
+  checkUser = async (req, res) => {
+    try {
+      return res.status(200).json({ message: "success" });
+    } catch (error) {
+      return res.status(500).json({ message: error });
+    }
+  };
+
   getOneUserHandler = async (req, res) => {
     try {
       const ObjectId = require("mongoose").Types.ObjectId;
@@ -107,7 +115,6 @@ class UserHandlers {
 
       return res.status(200).json({ message: "success", data: result.data });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ message: error });
     }
   };
@@ -144,7 +151,6 @@ class UserHandlers {
 
       return res.status(200).json({ message: "success", data: result.data });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ message: error });
     }
   };
@@ -159,7 +165,6 @@ class UserHandlers {
 
       return res.status(200).json({ message: "success", data: result.data });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ message: error });
     }
   };
@@ -188,7 +193,6 @@ class UserHandlers {
 
       return res.status(200).json({ message: "success", data: result.data });
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ message: error });
     }
   };

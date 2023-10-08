@@ -25,6 +25,8 @@ const userHandler = new UserHandlers(userService);
 
 router.post("/login", checkApiKey, signin, userHandler.loginHandler);
 
+router.get("/check", checkApiKey, user, userHandler.checkUser);
+
 router.get("/user/:id", checkApiKey, userHandler.getOneUserHandler);
 
 router.get("/user", checkApiKey, userHandler.getUserHandler);
