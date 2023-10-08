@@ -51,7 +51,6 @@ passport.use(
       try {
         const data = await userRepo.findOne(username);
         if (!data) {
-          console.log("no user");
           return done(null, false, { message: "username or password wrong" });
         }
         const validate = await bcrypt.compare(password, data.password);

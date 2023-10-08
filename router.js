@@ -6,6 +6,8 @@ const UserHandlers = require("./handlers/userHandler");
 const { kafkaBootStrap } = require("./bootstrap/kafka");
 const KafkaBroker = require("./broker/kafka");
 const { signin, user } = require("./middleware/auth");
+const { checkApiKey } = require("./middleware/apiKey");
+
 const router = express.Router();
 
 //repo
@@ -21,16 +23,16 @@ const userService = new UserService(userRepo);
 //handlers
 const userHandler = new UserHandlers(userService);
 
-router.post("/login", signin, userHandler.loginHandler);
+router.post("/login", checkApiKey, signin, userHandler.loginHandler);
 
-router.get("/user/:id", userHandler.getOneUserHandler);
+router.get("/user/:id", checkApiKey, userHandler.getOneUserHandler);
 
-router.get("/user", userHandler.getUserHandler);
+router.get("/user", checkApiKey, userHandler.getUserHandler);
 
-router.post("/user", userHandler.createUserHandler);
+router.post("/register", checkApiKey, userHandler.createUserHandler);
 
-router.put("/user/update", user, userHandler.updateUserHandler);
+router.put("/user/update", checkApiKey, user, userHandler.updateUserHandler);
 
-router.delete("/user/delete", user, userHandler.deleteHandler);
+router.delete("/user/delete", checkApiKey, user, userHandler.deleteHandler);
 
 module.exports = router;
