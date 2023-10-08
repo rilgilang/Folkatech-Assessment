@@ -2,17 +2,17 @@ const hashPassword = require("../helper/passwordSalt");
 const { user } = require("../models/models");
 
 class UserRepo {
-  async findAll() {
+  findAll = async () => {
     const result = await user.find({});
     return result;
-  }
+  };
 
-  async findOne() {
+  findOne = async () => {
     const result = await user.find({});
     return result;
-  }
+  };
 
-  async addUser(userData) {
+  addUser = async (userData) => {
     userData.password = hashPassword(userData.password);
     const newUser = await user.create(userData);
     const result = await user.findOne({
@@ -20,7 +20,7 @@ class UserRepo {
     });
 
     return result;
-  }
+  };
 }
 
 module.exports = UserRepo;

@@ -1,21 +1,24 @@
 const validator = require("validator");
 
 class UserHandlers {
-  async getUserHandler(req, res) {
+  constructor(userService) {
+    this.userService = userService;
+  }
+
+  getUserHandler = async (req, res) => {
     try {
-      const service = req.service;
-      const result = await service.getUsers();
+      const result = await this.userService.getUsers();
       if (result.statusCode != 200) {
         return res.status(result.statusCode).json({ message: result.message });
       }
-
       return res.status(200).json({ message: "success", data: result.data });
     } catch (error) {
+      console.log("error --> ", error);
       return res.status(500).json({ message: error });
     }
-  }
+  };
 
-  async createUserHandler(req, res) {
+  createUserHandler = async (req, res) => {
     try {
       const errorMessages = [];
       const validate = [
@@ -57,7 +60,7 @@ class UserHandlers {
       };
 
       const service = req.service;
-      const result = await service.addUser(user);
+      const result = await this.userService.addUser(user);
 
       if (result.statusCode != 200) {
         return res.status(result.statusCode).json({ message: result.message });
@@ -68,9 +71,9 @@ class UserHandlers {
       console.log(error);
       return res.status(500).json({ message: error });
     }
-  }
+  };
 
-  async loginHandler(req, res) {
+  loginHandler = async (req, res) => {
     try {
       const errorMessages = [];
       const validate = ["username", "password"];
@@ -97,7 +100,7 @@ class UserHandlers {
       const service = req.service;
       const passport = req.passport;
 
-      const result = await service.login(user, passport);
+      const result = await this.userService.login(user, passport);
 
       if (result.statusCode != 200) {
         return res.status(result.statusCode).json({ message: result.message });
@@ -108,7 +111,7 @@ class UserHandlers {
       console.log(error);
       return res.status(500).json({ message: error });
     }
-  }
+  };
 }
 
-module.exports = new UserHandlers();
+module.exports = UserHandlers;

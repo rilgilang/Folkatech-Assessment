@@ -26,7 +26,7 @@ passport.use(
       passwordField: "password",
       passReqToCallback: true,
     },
-    async (username, password, done) => {
+    async (req, username, password, done) => {
       try {
         const data = await user.findOne({ username: username });
         if (!data) {
