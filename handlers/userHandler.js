@@ -5,6 +5,25 @@ class UserHandlers {
     this.userService = userService;
   }
 
+  getOneUserHandler = async (req, res) => {
+    try {
+      const ObjectId = require("mongoose").Types.ObjectId;
+      const id = req.params.id;
+
+      if (!ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "id is not valid" });
+      }
+
+      const result = await this.userService.getOneUsers(id);
+      if (result.statusCode != 200) {
+        return res.status(result.statusCode).json({ message: result.message });
+      }
+      return res.status(200).json({ message: "success", data: result.data });
+    } catch (error) {
+      return res.status(500).json({ message: error });
+    }
+  };
+
   getUserHandler = async (req, res) => {
     try {
       const { account_number, identity_number } = req.query;

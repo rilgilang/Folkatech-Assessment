@@ -2,6 +2,11 @@ class UserService {
   constructor(userRepo) {
     this.userRepo = userRepo;
   }
+  getOneUsers = async (id) => {
+    const data = await this.userRepo.findOneById(id);
+    return { message: "success", data: data, statusCode: 200 };
+  };
+
   getUsers = async (params) => {
     const data = await this.userRepo.findAll(params);
     return { message: "success", data: data, statusCode: 200 };
